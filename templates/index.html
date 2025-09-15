@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amadeus Study Agent</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #64748b;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --accent: #3b82f6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --sidebar-width: 280px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            height: 90vh;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            display: flex;
+            overflow: hidden;
+        }
+        
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--dark);
+            color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        
+        .logo {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #8b5cf6, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+        
+        .logo p {
+            color: var(--secondary);
+            font-size: 14px;
+        }
+        
+        .tools-section {
+            margin-bottom: 25px;
+        }
+        
+        .section-title {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #94a3b8;
+            margin-bottom: 15px;
+        }
+        
+        .tool-card {
+            background: rgba(255,255,255,0.08);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .tool-card:hover {
+            background: rgba(255,255,255,0.12);
+            transform: translateY(-2px);
+        }
+        
+        .tool-card h3 {
+            font-size: 14px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .tool-card h3 i {
+            margin-right: 8px;
+            font-size: 12px;
+        }
+        
+        .tool-card p {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-bottom: 8px;
+        }
+        
+        .tool-card .example {
+            font-size: 11px;
+            color: #cbd5e1;
+            font-style: italic;
+            border-left: 2px solid var(--accent);
+            padding-left: 8px;
+        }
+        
+        .agentic-features {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .feature-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.1);
+            color: #e2e8f0;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            margin: 0 5px 5px 0;
+        }
+        
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--light);
+        }
+        
+        .chat-header {
+            padding: 20px;
+            border-bottom: 1px solid #e2e8f0;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .chat-header h2 {
+            color: var(--dark);
+            font-size: 20px;
+        }
+        
+        .status {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            color: var(--secondary);
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .message {
+            max-width: 75%;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 18px;
+            line-height: 1.5;
+            position: relative;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .user-message {
+            background: var(--primary);
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 5px;
+        }
+        
+        .agent-message {
+            background: white;
+            color: var(--dark);
+            border: 1px solid #e2e8f0;
+            margin-right: auto;
+            border-bottom-left-radius: 5px;
+        }
+        
+        .suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .suggestion-btn {
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+            border: 1px solid rgba(37, 99, 235, 0.2);
+            padding: 8px 15px;
+            border-radius: 18px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .suggestion-btn:hover {
+            background: rgba(37, 99, 235, 0.15);
+        }
+        
+        .input-area {
+            padding: 20px;
+            border-top: 1px solid #e2e8f0;
+            background: white;
+        }
+        
+        .input-container {
+            display: flex;
+            gap: 12px;
+        }
+        
+        input[type="text"] {
+            flex: 1;
+            padding: 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0 25px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: var(--primary-dark);
+        }
+        
+        .timer-section {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 15px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .timer-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .timer-header h3 {
+            font-size: 16px;
+            color: var(--dark);
+        }
+        
+        .timer-header i {
+            margin-right: 8px;
+            color: var(--primary);
+        }
+        
+        .timer-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .timer-controls input, .timer-controls select {
+            padding: 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .timer-btn {
+            padding: 10px 15px;
+            font-size: 14px;
+        }
+        
+        .active-timers {
+            margin-top: 15px;
+        }
+        
+        .timer-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: #f8fafc;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .timer-info {
+            font-size: 14px;
+        }
+        
+        .timer-actions button {
+            padding: 5px 10px;
+            font-size: 12px;
+            background: var(--error);
+        }
+        
+        /* Responsive design */
+        @media (max-width: 900px) {
+            .container {
+                flex-direction: column;
+                height: auto;
+            }
+            
+            .sidebar {
+                width: 100%;
+                max-height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="logo">
+                <h1>Amadeus Study Agent</h1>
+                <p>Your AI-powered academic assistant</p>
+            </div>
+            
+            <div class="tools-section">
+                <div class="section-title">Quick Tools</div>
+                <div class="tool-card" onclick="document.getElementById('query-input').value = 'Create a 10-hour study plan for calculus for visual learners'; sendMessage()">
+                    <h3><i class="fas fa-book"></i> Study Plan Creator</h3>
+                    <p>Create comprehensive study plans with time allocation</p>
+                    <div class="example">Create a 10-hour study plan for calculus for visual learners</div>
+                </div>
+                
+                <div class="tool-card" onclick="document.getElementById('query-input').value = 'Explain quantum physics to a beginner with 3 examples'; sendMessage()">
+                    <h3><i class="fas fa-lightbulb"></i> Concept Explainer</h3>
+                    <p>Get detailed explanations of complex concepts</p>
+                    <div class="example">Explain quantum physics to a beginner with 3 examples</div>
+                </div>
+                
+                <div class="tool-card" onclick="document.getElementById('query-input').value = 'Set a 25-minute timer for math practice'; sendMessage()">
+                    <h3><i class="fas fa-clock"></i> Study Timer</h3>
+                    <p>Set a study timer for focused learning sessions</p>
+                    <div class="example">Set a 25-minute timer for math practice</div>
+                </div>
+            </div>
+            
+            <div class="agentic-features">
+                <div class="section-title">Agentic Capabilities</div>
+                <div class="feature-badge">Autonomous Decision Making</div>
+                <div class="feature-badge">Tool Usage & Integration</div>
+                <div class="feature-badge">Multi-Agent Collaboration</div>
+                <div class="feature-badge">Coral Protocol Connected</div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="chat-header">
+                <h2>Amadeus Study Assistant</h2>
+                <div class="status">
+                    <div class="status-dot"></div>
+                    <span>Connected to Coral Server</span>
+                </div>
+            </div>
+            
+            <div class="chat-messages" id="chat-messages">
+                <div class="message agent-message">
+                    <strong>Amadeus</strong>: Hello! I'm your Amadeus Study Agent. I can help you with:
+                    <br>• Creating personalized study plans 📚
+                    <br>• Explaining complex concepts 💡
+                    <br>• Setting study timers and Pomodoro sessions ⏰
+                    <br>• Generating practice questions ❓
+                    <br>• Research assistance 🔍
+                    <br><br>What would you like help with today?
+                </div>
+            </div>
+            
+            <div class="input-area">
+                <div class="input-container">
+                    <input type="text" id="query-input" placeholder="Ask me anything about your studies..." onkeypress="handleKeyPress(event)">
+                    <button onclick="sendMessage()">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                
+                <div class="timer-section">
+                    <div class="timer-header">
+                        <h3><i class="fas fa-clock"></i> Study Timer</h3>
+                    </div>
+                    <div class="timer-controls">
+                        <input type="number" id="timer-minutes" placeholder="Minutes" min="1" max="120">
+                        <input type="text" id="timer-subject" placeholder="Subject">
+                        <input type="text" id="timer-name" placeholder="Timer Name (Optional)">
+                        <button class="timer-btn" onclick="setTimer()">Set Timer</button>
+                    </div>
+                    <div class="timer-controls">
+                        <input type="text" id="pomodoro-subject" placeholder="Pomodoro Subject">
+                        <select id="pomodoro-sessions">
+                            <option value="2">2 Sessions</option>
+                            <option value="4" selected>4 Sessions</option>
+                            <option value="6">6 Sessions</option>
+                            <option value="8">8 Sessions</option>
+                        </select>
+                        <button class="timer-btn" onclick="startPomodoro()">Start Pomodoro</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let conversationHistory = [];
+        
+        // Load available tools
+        fetch('/api/tools')
+            .then(response => response.json())
+            .then(tools => {
+                // Tools are already displayed in the sidebar
+            });
+        
+        function sendMessage() {
+            const input = document.getElementById('query-input');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Add user message to chat
+            addMessage(message, 'user');
+            input.value = '';
+            
+            // Send to agent
+            fetch('/api/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ query: message })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    addMessage(`Error: ${data.error}`, 'agent');
+                } else {
+                    addMessage(data.response, 'agent');
+                    
+                    // Show suggestions if available
+                    if (data.suggestions && data.suggestions.length > 0) {
+                        showSuggestions(data.suggestions);
+                    }
+                }
+            })
+            .catch(error => {
+                addMessage('Sorry, I encountered an error. Please try again.', 'agent');
+            });
+        }
+        
+        function addMessage(text, type) {
+            const messagesDiv = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}-message`;
+            
+            if (type === 'user') {
+                messageDiv.innerHTML = `<strong>You</strong>: ${text}`;
+            } else {
+                messageDiv.innerHTML = `<strong>Amadeus</strong>: ${text}`;
+            }
+            
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            
+            conversationHistory.push({ type, text });
+        }
+        
+        function showSuggestions(suggestions) {
+            const messagesDiv = document.getElementById('chat-messages');
+            const suggestionsDiv = document.createElement('div');
+            suggestionsDiv.className = 'suggestions';
+            
+            suggestions.forEach(suggestion => {
+                const button = document.createElement('button');
+                button.className = 'suggestion-btn';
+                button.textContent = suggestion;
+                button.onclick = () => {
+                    document.getElementById('query-input').value = suggestion;
+                };
+                suggestionsDiv.appendChild(button);
+            });
+            
+            messagesDiv.appendChild(suggestionsDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+        
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+        
+        function setTimer() {
+            const minutes = document.getElementById('timer-minutes').value;
+            const subject = document.getElementById('timer-subject').value;
+            const name = document.getElementById('timer-name').value || 'Study Session';
+            
+            if (!minutes || !subject) {
+                alert('Please enter both minutes and subject');
+                return;
+            }
+            
+            const query = `Set a timer for ${minutes} minutes for ${subject} named "${name}"`;
+            document.getElementById('query-input').value = query;
+            sendMessage();
+        }
+        
+        function startPomodoro() {
+            const subject = document.getElementById('pomodoro-subject').value;
+            const sessions = document.getElementById('pomodoro-sessions').value;
+            
+            if (!subject) {
+                alert('Please enter a subject');
+                return;
+            }
+            
+            document.getElementById('query-input').value = `Start a Pomodoro session for ${subject} with ${sessions} sessions`;
+            sendMessage();
+        }
+        
+        // Initial focus on input
+        document.getElementById('query-input').focus();
+        
+        // Periodically check for active timers
+        setInterval(() => {
+            fetch('/api/timers')
+                .then(response => response.json())
+                .then(data => {
+                    // You could update a timer display here if needed
+                    if (data.timers && data.timers.length > 0) {
+                        console.log('Active timers:', data.timers);
+                    }
+                });
+        }, 30000); // Check every 30 seconds
+    </script>
+</body>
+</html>

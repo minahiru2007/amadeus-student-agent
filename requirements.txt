@@ -1,0 +1,16 @@
+# Core Application
+Flask==2.3.3
+python-dotenv==1.0.0
+
+# AI & LangChain
+langchain==0.1.0
+langchain-core==0.1.0
+langchain-mistralai==0.0.2
+langchain-mcp-adapters==0.2.2
+
+# HTTP and Async
+requests==2.31.0
+aiohttp==3.9.0  # More compatible version
+
+# Utilities
+asyncio==3.4.3
