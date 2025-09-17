@@ -13,4 +13,4 @@ requests==2.31.0
 aiohttp==3.9.0  # More compatible version
 
 # Utilities
-streamlit>=1.22.0
+
